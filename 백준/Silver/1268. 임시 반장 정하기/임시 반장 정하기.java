@@ -15,34 +15,24 @@ public class Main {
 			}
 		}
 		
-		int[] answer = new int[N+1];
-		
+		int maxIdx = 0; 
+		int max = Integer.MIN_VALUE;
 		for (int i=1; i<=N; i++) { // 학생
-			boolean[] visited = new boolean[N+1];
-			for (int j=1; j<=5; j++) { // 학년
-				int clazz = arr[i][j];
-				for (int k=1; k<=N; k++) { // 비교학생
-					if (k != i && arr[k][j] == clazz) {
-						visited[k] = true;
+			int cnt = 0;
+			for (int j=1; j<=N; j++) { // 비교학생
+				for (int k=1; k<=5; k++) { // 반
+					if (arr[i][k] == arr[j][k]) {
+						cnt++;
+						break;
 					}
 				}
 			}
-			for (int l=1; l<=N; l++) {
-				if (visited[l]) answer[i]++;
-			}
-		}
-		
-		int max = Integer.MIN_VALUE;
-		int maxIdx = -1;
-		for (int i=1; i<=N; i++) {
-			if (answer[i] > max) {
-				max = answer[i];
+			if (cnt > max) {
+				max = cnt;
 				maxIdx = i;
 			}
 		}
-		
-		System.out.println(maxIdx);
-		
-		
+
+		System.out.println(maxIdx);	
 	}
 }
