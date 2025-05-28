@@ -11,11 +11,7 @@ class Person implements Comparable<Person> {
 
 	@Override
 	public int compareTo(Person o) {
-		if (this.a != o.a) {
-			return this.a - o.a; // a 오름차순
-		} else {
-			return this.b - o.b; // b 오름차순
-		}
+		return this.a - o.a;
 	}
 }
 
