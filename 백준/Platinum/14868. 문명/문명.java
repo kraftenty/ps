@@ -3,122 +3,100 @@ import java.util.*;
 
 public class Main {
 
-	static class Point {
-		public int y;
-		public int x;
-		public Point (int y, int x) {
-			this.y = y;
-			this.x = x;
-		}
-	}
+    static class Point {
+        int y, x;
+        Point(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+    }
 
-	static int N; // board 길이
-	static int K; // 문명 발상지의 수
-	static int[][] board;
-	
-	static int[] dy;
-	static int[] dx;
-	
-	static int sy,sx;
+    static int N, K;
+    static int[][] board;
+    static int[] parent;
+    static int[] dy = {-1, 1, 0, 0};
+    static int[] dx = {0, 0, -1, 1};
 
-	
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
-		board = new int[N][N];
-		for (int i=0; i<K; i++) {
-			st = new StringTokenizer(br.readLine());
-			int y = Integer.parseInt(st.nextToken());
-			int x = Integer.parseInt(st.nextToken());
-			board[y-1][x-1] = 1;
-			if (i==0) {
-				sy = y-1;
-				sx = x-1;
-			}
-		}
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-		dy = new int[]{-1, 1, 0, 0};
-		dx = new int[]{0, 0, 1, -1};
-		
-		
+        board = new int[N][N];
+        parent = new int[K + 1];
+        Queue<Point> q = new ArrayDeque<>();
+        
+        for (int i = 1; i <= K; i++) {
+            st = new StringTokenizer(br.readLine());
+            int y = Integer.parseInt(st.nextToken()) - 1;
+            int x = Integer.parseInt(st.nextToken()) - 1;
+            board[y][x] = i;
+            parent[i] = i;
+            q.offer(new Point(y, x));
+        }
 
-		Queue<Point> q = new ArrayDeque<>();
-		
-		for (int y=0; y<N; y++) {
-			for (int x=0; x<N; x++) {
-				if (board[y][x] != 0) {
-					q.offer(new Point(y, x));
-				}
-			}
-		}
 
-		int year = 0;
-		while(!isUnion()) {
-			int size = q.size();
-			for (int i=0; i<size; i++) {
-				Point p = q.poll();
-				for (int d=0; d<4; d++) {
-					int ny = p.y + dy[d];
-					int nx = p.x + dx[d];
-					if (ny >= 0 && ny < N && nx >= 0 && nx < N && board[ny][nx] == 0) {
-						board[ny][nx] = 1;
-						q.offer(new Point(ny, nx));
-					}
-				}
-			}
-			year++;
-		}
-		
-		System.out.println(year);
-		
-	}
-	
-	public static boolean isUnion() {
-		boolean[][] visited = new boolean[N][N];
-		for (int i=0; i<N; i++) {
-			for (int j=0; j<N; j++) {
-				if (board[i][j] == 0) {
-					visited[i][j] = true;
-				}
-			}
-		}
-		
-		dfs(sy, sx, visited);
-		
-		for (int i=0; i<N; i++) {
-			for (int j=0; j<N; j++) {
-				if (visited[i][j] == false) {
-					return false;
-				}
-			}
-		}
-		
-		return true;
-		
-	}
-	
-	public static void dfs(int y, int x, boolean[][] visited) {
-		for(int i=0; i<4; i++) {
-			int ny = y + dy[i];
-			int nx = x + dx[i];
-			if (ny >= 0 && ny < N && nx >= 0 && nx < N && !visited[ny][nx] && board[ny][nx]==1) {
-				visited[ny][nx] = true;
-				dfs(ny, nx, visited);
-			}
-		}
-	}
-	
-	
-	
-	public static void print() {
-		for (int i=0; i<N; i++) {
-			for (int j=0; j<N; j++) {
-				System.out.print(board[i][j] + " ");
-			}
-			System.out.println();
-		}
-		System.out.println("-----------------");
-	}
+        int civCount = K;
+        for (Point p : q) {
+            int curCiv = board[p.y][p.x];
+            for (int d = 0; d < 4; d++) {
+                int ny = p.y + dy[d];
+                int nx = p.x + dx[d];
+                if (ny >= 0 && ny < N && nx >= 0 && nx < N) {
+                    int nextCiv = board[ny][nx];
+                    if (nextCiv != 0 && nextCiv != curCiv && union(curCiv, nextCiv)) {
+                        civCount--;
+                    }
+                }
+            }
+        }
+
+        int year = 0;
+        while (civCount > 1) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                Point p = q.poll();
+                int curCiv = board[p.y][p.x];
+                // 주변에 문명확산
+                for (int d = 0; d < 4; d++) {
+                    int ny = p.y + dy[d];
+                    int nx = p.x + dx[d];
+                    if (ny >= 0 && ny < N && nx >= 0 && nx < N && board[ny][nx] == 0) {
+                        board[ny][nx] = curCiv;
+                        q.offer(new Point(ny, nx));
+
+                        // 문명 유니온
+                        for (int nd = 0; nd < 4; nd++) {
+                            int nny = ny + dy[nd];
+                            int nnx = nx + dx[nd];
+                            if (nny >= 0 && nny < N && nnx >= 0 && nnx < N) {
+                                int nextCiv = board[nny][nnx];
+                                if (nextCiv != 0 && nextCiv != curCiv && union(curCiv, nextCiv)) {
+                                    civCount--;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            year++;
+        }
+
+        System.out.println(year);
+
+    }
+
+    static int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    static boolean union(int a, int b) { // 유니온 될 때마다 true반환
+        a = find(a);
+        b = find(b);
+        if (a == b) return false;
+        parent[b] = a;
+        return true;
+    }
 }
