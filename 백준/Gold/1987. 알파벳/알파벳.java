@@ -6,7 +6,7 @@ public class Main {
 	static int R; // row
 	static int C; // column
 	static char[][] board;
-	static Set<Character> set; // 방문 체크 셋
+	static boolean[] visited = new boolean[26];
 	static int maxLength;
 	
 	static int[] dy = new int[] {-1,1,0,0};
@@ -27,10 +27,8 @@ public class Main {
 			}
 		}
 		
-		set = new HashSet<>();
+		visited[board[0][0] - 'A'] = true;
 		maxLength = 0;
-
-		set.add(board[0][0]);
 		dfs(0, 0, 1);
 		
 		System.out.println(maxLength);
@@ -44,10 +42,10 @@ public class Main {
 			int nx = x + dx[i];
 			
 			if (ny>=0 && ny<R && nx>=0 && nx<C
-					&& !set.contains(board[ny][nx])) {
-				set.add(board[ny][nx]);
+					&& !visited[board[ny][nx] - 'A']) {
+				visited[board[ny][nx] - 'A'] = true;
 				dfs(ny, nx, length+1);
-				set.remove(board[ny][nx]);
+				visited[board[ny][nx] - 'A'] = false;
 			}
 		}
 		
