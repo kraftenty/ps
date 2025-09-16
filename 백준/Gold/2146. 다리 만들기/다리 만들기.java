@@ -49,17 +49,17 @@ public class Main {
 		}
 		
 		
-		// 육지와 붙어있는 0에서 bfs시작
+		// 바다와 붙어있는 땅에서 시작
 		int minLen = Integer.MAX_VALUE;
 		for (int y=0; y<N; y++) {
 			for (int x=0; x<N; x++) {
-				if (board[y][x] == 0) {
+				if (board[y][x] != 0) {
 					// 육지와 붙어있는가
 					for (int i=0; i<4; i++) {
 						int ny = y + dy[i];
 						int nx = x + dx[i];
-						if (ny>=0 && ny<N && nx>=0 && nx<N && board[ny][nx]!=0) {
-							int val = bfs2(y, x, board[ny][nx]);
+						if (ny>=0 && ny<N && nx>=0 && nx<N && board[ny][nx]==0) {
+							int val = bfs2(y, x, board[y][x]);
 //							System.out.println("val="+val+",y,x=" + y + "," + x);
 							minLen = Math.min(minLen, val);
 							break;
@@ -99,7 +99,7 @@ public class Main {
 	
 	static int bfs2(int sy, int sx, int startNum) {
 		Queue<Node> q = new ArrayDeque<>();
-		q.add(new Node(sy, sx, 1));
+		q.add(new Node(sy, sx, 0));
 		boolean[][] visited = new boolean[N][N];
 		visited[sy][sx] = true;
 		
@@ -116,7 +116,7 @@ public class Main {
 					
 					if (board[ny][nx] != 0 && board[ny][nx] != startNum && (minLen > cur.l)) {
 						minLen = cur.l;
-					} else {
+					} else if (board[ny][nx] == 0) {
 						q.offer(new Node(ny, nx, cur.l+1));	
 					}
 				}
