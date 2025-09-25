@@ -8,8 +8,7 @@ class Fireball {
 	int m; // 질량
 	int s; // 속력
 	int d; // 방향
-	boolean deleted;
-
+	
 	public Fireball(int y, int x, int m, int s, int d, int id) {
 		this.y=y;
 		this.x=x;
@@ -17,7 +16,6 @@ class Fireball {
 		this.s=s;
 		this.d=d;
 		this.id=id;
-		this.deleted = false;
 	}
 }
  
@@ -78,27 +76,21 @@ public class Main {
 		// 남아있는 파이어볼 질량 합
 		int mSum = 0;
 		for (Fireball fb : li) {
-			if (!fb.deleted) {
-				mSum += fb.m;
-			}
+			mSum += fb.m;
 		}
 		System.out.println(mSum);
 	}
 	
 	static void moveAll() {
 		// 모든 파이어볼 이동
-		for (Fireball fb : li) {
-			if (fb.deleted) continue;
-			
-			// 원래 위치의 파볼 삭제
-			List<Fireball> cellLi = arr[fb.y][fb.x];
-			for (int i=0; i<cellLi.size(); i++) {
-				if (fb.id == cellLi.get(i).id) {
-					cellLi.remove(i);
-					break;
-				}
+		List<Fireball>[][] newArr = new ArrayList[N][N];
+		for (int y=0; y<N; y++) {
+			for (int x=0; x<N; x++) {
+				newArr[y][x] = new ArrayList<>();
 			}
-		
+		}
+		for (Fireball fb : li) {
+			
 			// 새로운 위치에 파볼 배치: 좌표 순환
 			fb.y = (fb.y + fb.s*dy[fb.d]) % N;
 			if (fb.y < 0) fb.y += N;
@@ -106,17 +98,23 @@ public class Main {
 			fb.x = (fb.x + fb.s*dx[fb.d]) % N;
 			if (fb.x < 0) fb.x += N;
 
-			arr[fb.y][fb.x].add(fb);
-			
-			
+			newArr[fb.y][fb.x].add(fb);
 		}
+		
+		arr = newArr;
 	}
 	
 	static void sumAndSplit() {
+		List<Fireball> newLi = new ArrayList<>();
+		
 		for (int y=0; y<N; y++) {
 			for (int x=0; x<N; x++) {
 				List<Fireball> cellLi = arr[y][x];
-				if (cellLi.size() < 2) {
+				if (cellLi.isEmpty()) {
+					continue;
+				}
+				if (cellLi.size() == 1) {
+					newLi.add(cellLi.get(0));
 					continue;
 				}
 				
@@ -138,10 +136,7 @@ public class Main {
 							}
 						}
 					}
-					victim.deleted = true;
 				}
-				arr[y][x] = new ArrayList<>();
-				cellLi = arr[y][x];
 				
 				
 				// 나누기
@@ -149,23 +144,23 @@ public class Main {
 				int s = s_sum / originalFbCnt;
 				if (m > 0) {
 					if (is0246) {
-						cellLi.add(new Fireball(y, x, m, s, 0, idAutoInc++));
-						cellLi.add(new Fireball(y, x, m, s, 2, idAutoInc++));
-						cellLi.add(new Fireball(y, x, m, s, 4, idAutoInc++));
-						cellLi.add(new Fireball(y, x, m, s, 6, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 0, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 2, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 4, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 6, idAutoInc++));
 						 
 					} else {
-						cellLi.add(new Fireball(y, x, m, s, 1, idAutoInc++));
-						cellLi.add(new Fireball(y, x, m, s, 3, idAutoInc++));
-						cellLi.add(new Fireball(y, x, m, s, 5, idAutoInc++));
-						cellLi.add(new Fireball(y, x, m, s, 7, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 1, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 3, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 5, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 7, idAutoInc++));
 					}
 					
-					li.addAll(cellLi);
 				}
 				
 				
 			}
 		}
+		li = newLi;
 	}
 }
