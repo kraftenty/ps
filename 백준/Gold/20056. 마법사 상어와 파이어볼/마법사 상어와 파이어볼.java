@@ -2,20 +2,18 @@ import java.util.*;
 import java.io.*;
 
 class Fireball {
-	int id;
 	int y;
 	int x;
 	int m; // 질량
 	int s; // 속력
 	int d; // 방향
 	
-	public Fireball(int y, int x, int m, int s, int d, int id) {
+	public Fireball(int y, int x, int m, int s, int d) {
 		this.y=y;
 		this.x=x;
 		this.m=m;
 		this.s=s;
 		this.d=d;
-		this.id=id;
 	}
 }
  
@@ -24,7 +22,6 @@ public class Main {
 	static int N; // N*N
 	
 	static List<Fireball> li;
-	static int idAutoInc;
 	
 	static List<Fireball>[][] arr;
 	
@@ -41,7 +38,6 @@ public class Main {
 		
 		li = new ArrayList<Fireball>();
 		arr = new ArrayList[N][N];
-		idAutoInc = 0;
 		
 		for (int y=0; y<N; y++) {
 			for (int x=0; x<N; x++) {
@@ -56,7 +52,7 @@ public class Main {
 			int m=Integer.parseInt(st.nextToken());
 			int s=Integer.parseInt(st.nextToken());
 			int d=Integer.parseInt(st.nextToken());
-			Fireball fb = new Fireball(y-1, x-1, m, s, d, idAutoInc++);
+			Fireball fb = new Fireball(y-1, x-1, m, s, d);
 			li.add(fb);
 			arr[y-1][x-1].add(fb);
 		}
@@ -144,16 +140,16 @@ public class Main {
 				int s = s_sum / originalFbCnt;
 				if (m > 0) {
 					if (is0246) {
-						newLi.add(new Fireball(y, x, m, s, 0, idAutoInc++));
-						newLi.add(new Fireball(y, x, m, s, 2, idAutoInc++));
-						newLi.add(new Fireball(y, x, m, s, 4, idAutoInc++));
-						newLi.add(new Fireball(y, x, m, s, 6, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 0));
+						newLi.add(new Fireball(y, x, m, s, 2));
+						newLi.add(new Fireball(y, x, m, s, 4));
+						newLi.add(new Fireball(y, x, m, s, 6));
 						 
 					} else {
-						newLi.add(new Fireball(y, x, m, s, 1, idAutoInc++));
-						newLi.add(new Fireball(y, x, m, s, 3, idAutoInc++));
-						newLi.add(new Fireball(y, x, m, s, 5, idAutoInc++));
-						newLi.add(new Fireball(y, x, m, s, 7, idAutoInc++));
+						newLi.add(new Fireball(y, x, m, s, 1));
+						newLi.add(new Fireball(y, x, m, s, 3));
+						newLi.add(new Fireball(y, x, m, s, 5));
+						newLi.add(new Fireball(y, x, m, s, 7));
 					}
 					
 				}
