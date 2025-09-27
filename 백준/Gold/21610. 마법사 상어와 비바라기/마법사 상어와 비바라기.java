@@ -64,7 +64,7 @@ public class Main {
 			waterCopyMagic(clouds);
 			
 			// [5] 구름 생성
-			List<Node> generatedClouds = generateCloud2(clouds);
+			List<Node> generatedClouds = generateCloud(clouds);
 			clouds = generatedClouds;
 			
 		}
@@ -123,26 +123,6 @@ public class Main {
 		for (int y=0; y<N; y++) {
 			for (int x=0; x<N; x++) {
 				if (!v[y][x] && A[y][x]>=2) {
-					generatedClouds.add(new Node(y, x));
-					A[y][x]-=2;
-				}
-			}
-		}
-		
-		return generatedClouds;
-	}
-	
-	static List<Node> generateCloud2(List<Node> removedClouds) {
-		List<Node> generatedClouds = new ArrayList<>();
-		for (int y=0; y<N; y++) {
-			A: for (int x=0; x<N; x++) {
-				for (Node r : removedClouds) {
-					if (r.y==y && r.x==x) {
-						continue A;
-					}
-				}
-				
-				if (A[y][x]>=2) {
 					generatedClouds.add(new Node(y, x));
 					A[y][x]-=2;
 				}
