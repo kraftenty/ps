@@ -41,47 +41,28 @@ public class Main {
 			if (cur.y == N-1 && cur.x == N-1) {
 				cnt++;
 			}
-			for (Node next : getAbleNodes(cur)) {
-				q.offer(next);
+			
+			if (cur.d==0 || cur.d==1) { // 가로
+				if (inArea(cur.y, cur.x+1, false)) {
+					q.add(new Node(cur.y, cur.x+1, 0));
+				}
+			}
+			if (cur.d==1 || cur.d==2) { // 세로
+				if (inArea(cur.y+1, cur.x, false)) {
+					q.add(new Node(cur.y+1, cur.x, 2));
+				}
+			}
+			// 대각
+			if (inArea(cur.y+1, cur.x+1, true)) {
+				q.add(new Node(cur.y+1, cur.x+1, 1));
 			}
 		}
 		
 		System.out.println(cnt);
 	}
 	
-	static List<Node> getAbleNodes(Node cur) {
-		List<Node> ret = new ArrayList<>();
-		if (cur.d == 0) { // 가로
-			if (inArea(cur.y, cur.x+1, false)) {
-				ret.add(new Node(cur.y, cur.x+1, 0));
-			}
-			if (inArea(cur.y+1, cur.x+1, true)) {
-				ret.add(new Node(cur.y+1, cur.x+1, 1));
-			}
-		} else if (cur.d == 1) { // 대각
-			if (inArea(cur.y, cur.x+1, false)) {
-				ret.add(new Node(cur.y, cur.x+1, 0));
-			}
-			if (inArea(cur.y+1, cur.x+1, true)) {
-				ret.add(new Node(cur.y+1, cur.x+1, 1));
-			}
-			if (inArea(cur.y+1, cur.x, false)) {
-				ret.add(new Node(cur.y+1, cur.x, 2));
-			}
-		} else if (cur.d == 2) { // 세로
-			if (inArea(cur.y+1, cur.x, false)) {
-				ret.add(new Node(cur.y+1, cur.x, 2));
-			}
-			if (inArea(cur.y+1, cur.x+1, true)) {
-				ret.add(new Node(cur.y+1, cur.x+1, 1));
-			}
-		}
-		
-		return ret;
-	}
-	
 	static boolean inArea(int y, int x, boolean isWide) {
-		boolean b = y>=0 && y<N && x>=0 && x<N && !board[y][x];
+		boolean b = y<N && x<N && !board[y][x];
 		if (isWide && b) {
 			b = b && (y-1>=0 && y-1<N) && (x-1>=0 && x-1<N) && !board[y-1][x] && !board[y][x-1];
 		}
