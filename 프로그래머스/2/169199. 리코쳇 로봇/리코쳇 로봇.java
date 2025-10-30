@@ -10,13 +10,11 @@ class Node {
 }
 
 class Solution {
-    
     // 상 하 좌 우
     final static int[] dy = {-1, 1, 0, 0};
     final static int[] dx = {0, 0, -1, 1};
     
-    boolean[][][] v = new boolean[101][101][4]; // y x d
-    int minVal = Integer.MAX_VALUE;
+    boolean[][] v = new boolean[100][100]; // y x
     int R,C;
     char[][] b;
     
@@ -27,9 +25,8 @@ class Solution {
         
         int sy=0, sx=0;
         for (int y=0; y<R; y++) {
-            char[] charr = board[y].toCharArray();
+            b[y] = board[y].toCharArray();
             for (int x=0; x<C; x++) {
-                b[y][x] = charr[x];
                 if (b[y][x]=='R') {
                     sy = y;
                     sx = x;
@@ -37,24 +34,21 @@ class Solution {
             }
         }
         
-        bfs(sy, sx);
-        if (minVal == Integer.MAX_VALUE) return -1;
-        return minVal;
+        return bfs(sy, sx);
     }
     
-    void bfs(int sy, int sx) {
+    int bfs(int sy, int sx) {
         Queue<Node> q = new ArrayDeque<>();
         q.offer(new Node(sy, sx, 0));
+        v[sy][sx] = true;
         
         while (!q.isEmpty()) {
             Node cur = q.poll();
             if (b[cur.y][cur.x]=='G') {
-                minVal = Math.min(minVal, cur.cnt);
-                continue;
+                return cur.cnt;
             }
             
             for (int d=0; d<4; d++) {
-                int hop=0;
                 int y=cur.y;
                 int x=cur.x;
                 while (true) {
@@ -63,18 +57,17 @@ class Solution {
                     if (ny<0 || ny>=R || nx<0 || nx>=C || b[ny][nx]=='D') {
                         break;
                     }
-                    hop++;
                     y = ny;
                     x = nx;
                 }
                 
-                if (hop==0 || v[y][x][d]) {
-                    continue;
-                }
+                if (v[y][x]) continue;
                 
                 q.offer(new Node(y, x, cur.cnt+1));
-                v[y][x][d] = true;
+                v[y][x] = true;
             }
         }
+        
+        return -1;
     }
 }
