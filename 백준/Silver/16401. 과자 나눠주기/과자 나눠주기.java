@@ -13,42 +13,37 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 		N = Integer.parseInt(st.nextToken());
 		
-		Integer[] in = new Integer[N];
+		int[] arr = new int[N];
+		int maxLen = 0;
 		st = new StringTokenizer(br.readLine());
 		for (int i=0; i<N; i++) {
-			in[i] = Integer.parseInt(st.nextToken());
+			arr[i] = Integer.parseInt(st.nextToken());
+			maxLen = Math.max(maxLen, arr[i]);
 		}
-		Arrays.sort(in, (a,b) -> {
-			return b-a;
-		});
-	
 		
-		int[] arr = new int[M];
-		for (int i=0; i<M; i++) {
-			if (i < N) arr[i] = in[i];
-		}
 	
 		// 파라메트릭 서치
-		Arrays.sort(arr);
 	
 		int lt = 1;
-		int rt = arr[M-1];
+		int rt = maxLen;
+		int answer = 0;
 		while (lt <= rt) {
 			int md = (lt+rt)/2; // 과자길이
 			
 			int cnt = 0; // 줄수있는 조카의 수
-			for (int i=0; i<M; i++) {
+			for (int i=0; i<N; i++) {
 				cnt += (arr[i]/md);
 			}
 			
-			if (cnt<M) {
-				rt = md - 1;
-			} else {
+			if (cnt>=M) {
+				answer = md;
 				lt = md + 1;
+			} else {
+				rt = md - 1;
 			}
 		}
 		
-		System.out.println(rt);
+		System.out.println(answer);
 		
 	}
 	
